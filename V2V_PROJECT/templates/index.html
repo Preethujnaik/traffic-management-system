@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>6G Vehicle Communication Simulator</h1>
+        <p>Experience the future of vehicle-to-everything (V2X) communication with our advanced 6G simulation platform</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Get Started</a>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Learn More</a>
+        </div>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature">
+        <h3>V2V Communication</h3>
+        <p>Vehicle-to-Vehicle communication for collision avoidance and cooperative driving</p>
+    </div>
+    <div class="feature">
+        <h3>V2I Communication</h3>
+        <p>Vehicle-to-Infrastructure communication with traffic signals and roadside units</p>
+    </div>
+    <!-- <div class="feature">
+        <h3>V2X Communication</h3>
+        <p>Vehicle-to-Everything communication including pedestrians and IoT devices</p>
+    </div> -->
+</div>
+{% endblock %}

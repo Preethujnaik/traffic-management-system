@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-form">
+        <div class="auth-header">
+            <h2>Create an Account</h2>
+            <p>Join the 6G vehicle communication simulation platform</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">Register</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </div>
+    </div>
+    
+    <div class="auth-info">
+        <div class="auth-info-content">
+            <h3>Why Join Our Platform?</h3>
+            <p>Gain access to advanced 6G vehicle communication simulations with these benefits:</p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <i class="icon">🔒</i>
+                    <span>Secure authentication</span>
+                </div>
+                <div class="feature-item">
+                    <i class="icon">📊</i>
+                    <span>Real-time simulation data</span>
+                </div>
+                <div class="feature-item">
+                    <i class="icon">🔄</i>
+                    <span>Interactive vehicle controls</span>
+                </div>
+                <div class="feature-item">
+                    <i class="icon">📈</i>
+                    <span>Performance analytics</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

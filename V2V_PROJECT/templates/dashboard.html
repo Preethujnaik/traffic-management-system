@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Welcome, {{ username }}!</h1>
+    
+    <div class="simulation-control-panel">
+        <h2>Simulation Configuration</h2>
+        <form id="simulation-config">
+            <div class="config-group">
+                <label for="vehicle-count">Number of Vehicles per Road:</label>
+                <input type="number" id="vehicle-count" name="vehicle_count" min="1" max="20" value="5">
+            </div>
+            
+            <div class="config-group">
+                <label>Enable AI Traffic Prediction:</label>
+                <input type="checkbox" id="ai-prediction" name="ai_prediction" checked>
+            </div>
+            
+            <div class="config-group">
+                <label>Enable Emergency Vehicle Priority:</label>
+                <input type="checkbox" id="emergency-priority" name="emergency_priority" checked>
+            </div>
+            
+            <button type="button" id="apply-config" class="btn btn-primary">Apply Configuration</button>
+        </form>
+    </div>
+    
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>Simulation Controls</h3>
+            <p>Start, stop, and configure your simulation</p>
+            <a href="{{ url_for('simulation') }}" class="btn btn-primary">Go to Simulation</a>
+            <div class="simulation-status">
+                <p>Status: <span id="sim-status">Not Running</span></p>
+                <button id="start-sim" class="btn btn-success">Start Simulation</button>
+                <button id="stop-sim" class="btn btn-danger">Stop Simulation</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Communication Types</h3>
+            <ul>
+                <li>V2V - Vehicle-to-Vehicle</li>
+                <li>V2I - Vehicle-to-Infrastructure</li>
+                <li>V2X - Vehicle-to-Everything</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h3>Network Slicing</h3>
+            <p>Explore different network slices for optimized communication</p>
+            <ul>
+                <li>eMBB - Enhanced Mobile Broadband</li>
+                <li>URLLC - Ultra-Reliable Low-Latency Communication</li>
+                <li>mMTC - Massive Machine-Type Communication</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="real-time-stats">
+        <h2>Real-time Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h4>Active Vehicles</h4>
+                <p id="active-vehicles">0</p>
+            </div>
+            <div class="stat-item">
+                <h4>Average Speed</h4>
+                <p id="avg-speed">0 km/h</p>
+            </div>
+            <div class="stat-item">
+                <h4>Network Latency</h4>
+                <p id="avg-latency">0 ms</p>
+            </div>
+            <div class="stat-item">
+                <h4>Signal Strength</h4>
+                <p id="avg-signal">0 dBm</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Start simulation button
+    document.getElementById('start-sim').addEventListener('click', function() {
+        fetch('/start_simulation')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('sim-status').textContent = 'Running';
+                updateStats();
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    
+    // Stop simulation button
+    document.getElementById('stop-sim').addEventListener('click', function() {
+        fetch('/stop_simulation')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('sim-status').textContent = 'Stopped';
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    
+    // Apply configuration
+    document.getElementById('apply-config').addEventListener('click', function() {
+        const vehicleCount = document.getElementById('vehicle-count').value;
+        const aiPrediction = document.getElementById('ai-prediction').checked;
+        const emergencyPriority = document.getElementById('emergency-priority').checked;
+        
+        fetch('/update_config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                vehicle_count: vehicleCount,
+                ai_prediction: aiPrediction,
+                emergency_priority: emergencyPriority
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Configuration updated successfully!');
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    
+    // Function to update real-time statistics
+    function updateStats() {
+        fetch('/get_simulation_stats')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('active-vehicles').textContent = data.active_vehicles;
+                document.getElementById('avg-speed').textContent = data.avg_speed + ' km/h';
+                document.getElementById('avg-latency').textContent = data.avg_latency + ' ms';
+                document.getElementById('avg-signal').textContent = data.avg_signal + ' dBm';
+                
+                if (document.getElementById('sim-status').textContent === 'Running') {
+                    setTimeout(updateStats, 2000); // Update every 2 seconds
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+});
+</script>
+{% endblock %}
